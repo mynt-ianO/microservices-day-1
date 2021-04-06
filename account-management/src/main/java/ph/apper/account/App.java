@@ -1,21 +1,62 @@
 package ph.apper.account;
 
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.ApplicationPidFileWriter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class App {
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
+
+        SpringApplication app = new SpringApplication(App.class);
+        app.addListeners(new ApplicationPidFileWriter());
+        app.run(args);
+
     }
 
-    @RequestController
-    @RequestParam("account")
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Service
+    @RestController
+    @RequestMapping("account")
     public static class AccountController {
+
+        @Value("${service.url}")
+        private String reqUrl;
+
+        private final RestTemplate restTemplate;
+
+        public AccountController(RestTemplate restTemplate) {
+            this.restTemplate = restTemplate;
+        }
 
         @PostMapping
         public ResponseEntity create(@RequestBody Request request) {
             System.out.println(request);
+            System.out.println(reqUrl);
+
+            Activity activity = new Activity();
+            activity.setAction("REGISTRATION");
+            activity.setIdentifier("email="+request.getEmail());
+
+            ResponseEntity<Object> response;
+            response = restTemplate.postForEntity(reqUrl, activity, Object.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("SUCCESSFUL");
+            } else {
+                System.out.println("ERROR");
+            }
 
             return ResponseEntity.ok().build();
         }
@@ -23,8 +64,17 @@ public class App {
     }
 
     @Data
-    public static class Request {
+    public static class Activity {
         private String action;
         private String identifier;
     }
+
+    @Data
+    public static class Request {
+        private String firstName;
+        private String lastName;
+        private String Email;
+        private String Password;
+    }
+
 }
