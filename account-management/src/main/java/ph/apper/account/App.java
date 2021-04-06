@@ -14,11 +14,9 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class App {
     public static void main(String[] args) {
-
         SpringApplication app = new SpringApplication(App.class);
         app.addListeners(new ApplicationPidFileWriter());
         app.run(args);
-
     }
 
     @Bean
@@ -49,9 +47,11 @@ public class App {
             activity.setAction("REGISTRATION");
             activity.setIdentifier("email="+request.getEmail());
 
+            System.out.println("AAAAAAAAAAAA");
             ResponseEntity<Object> response;
             response = restTemplate.postForEntity(reqUrl, activity, Object.class);
 
+            System.out.println("BBBBBBBBBBBB");
             if (response.getStatusCode().is2xxSuccessful()) {
                 System.out.println("SUCCESSFUL");
             } else {
@@ -73,8 +73,8 @@ public class App {
     public static class Request {
         private String firstName;
         private String lastName;
-        private String Email;
-        private String Password;
+        private String email;
+        private String password;
     }
 
 }

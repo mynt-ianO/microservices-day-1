@@ -30,9 +30,7 @@ public class App {
 
     @Data
     public static class Request {
-        private String firstName;
-        private String lastName;
-        private String Email;
-        private String Password;
+        private String action;
+        private String identifier;
     }
 }
