@@ -47,11 +47,9 @@ public class App {
             activity.setAction("REGISTRATION");
             activity.setIdentifier("email="+request.getEmail());
 
-            System.out.println("AAAAAAAAAAAA");
             ResponseEntity<Object> response;
             response = restTemplate.postForEntity(reqUrl, activity, Object.class);
 
-            System.out.println("BBBBBBBBBBBB");
             if (response.getStatusCode().is2xxSuccessful()) {
                 System.out.println("SUCCESSFUL");
             } else {
